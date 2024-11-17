@@ -29,8 +29,8 @@ CREATE TABLE LearningPreference(
 
 -- 2 Creation of Personalization Profiles
 CREATE TABLE PersonalizationProfileS(
-    INT LearnerID IDENTITY,
-    INT ProfileID IDENTITY,
+    LearnerID INT IDENTITY,
+    ProfileID INT IDENTITY,
     Prefered_content_type VARCHAR(20),
     emotional_state VARCHAR(20),
     personality_type VARCHAR(20),
@@ -39,8 +39,8 @@ CREATE TABLE PersonalizationProfileS(
 ); 
 -- 2 PersonalizationProfileS multivalued attribute
  CREATE TABLE HealthCondition(
-    INT LearnerID IDENTITY,
-    INT ProfileID IDENTITY,
+    LearnerID INT IDENTITY,
+    ProfileID INT IDENTITY,
     Condition VARCHAR (20),
     PRIMARY KEY (LearnerID,ProfileID,condition),
     FOREIGN KEY (LearnerID,ProfileID) REFERENCES PersonalizationProfileS(LearnerID,ProfileID)
@@ -65,7 +65,16 @@ CREATE TABLE PersonalizationProfileS(
     );
 
 --6 Creation of Course Enrollment
-    --Enter code here
+    CREATE TABLE Course_enrollment(
+        EnrollmentID INT PRIMARY KEY IDENTITY,
+        CourseID INT,
+        LearnerID INT,
+        completion_date DATE,
+        enrollment_date DATE,
+        status VARCHAR(20),  --status is an attribute
+        FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID)
+    )
 
 --7 Creation of Achievements
     --Enter code here
@@ -81,7 +90,17 @@ CREATE TABLE PersonalizationProfileS(
     
 
 --10 Creation of Learning Paths
-    --Enter code here
+    CREATE TABLE Learning_path (
+        pathID INT PRIMARY KEY IDENTITY, 
+        LearnerID INT,
+        ProfileID INT,
+        completion_status VARCHAR(20), 
+        custom_content VARCHAR(20), --this needs many characters
+        adaptive_rules VARCHAR(20), --this needs many characters
+        FOREIGN KEY (LearnerID) REFERENCES PersonalizationProfiles(LearnerID),
+        FOREIGN KEY (ProfileID) REFERENCES PersonalizationProfiles(ProfileID)
+);
+
 
 --11 Creation of Interaction Logs
     --Enter code here
@@ -110,11 +129,17 @@ CREATE TABLE PersonalizationProfileS(
          int QuestID PRIMARY KEY IDENTITY,
          deadline DATE,
          max_num_participants INT,
-          FOREIGN KEY (QuestID) REFERENCES Quest ON DELETE CASCADE ON UPDATE CASCADE 
+        FOREIGN KEY (QuestID) REFERENCES Quest ON DELETE CASCADE ON UPDATE CASCADE 
     );
 
 --14 Creation of Rewards
-    --Enter code here
+    CREATE TABLE Reward (
+        RewardID INT PRIMARY KEY IDENTITY, 
+        value INT,
+        description VARCHAR(20), ----this needs many characters
+        type VARCHAR(20) 
+);
+
 
 --15 Creation of Skill Progression
     --Enter code here
@@ -152,7 +177,19 @@ CREATE TABLE PersonalizationProfileS(
     );
 
 --18 Creation of Content Library
-    --Enter code here
+    CREATE TABLE ContentLibrary (
+        ID INT PRIMARY KEY IDENTITY, 
+        ModuleID INT,
+        CourseID INT,
+        Title VARCHAR(20),
+        description VARCHAR(20),
+        metadata VARCHAR(20),
+        type VARCHAR(20), 
+        content_URL VARCHAR(20), 
+        FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID),
+        FOREIGN KEY (CourseID) REFERENCES Modules(CourseID)
+);
+
 
 --19 Creation of Notifications
     --Enter code here
@@ -178,7 +215,26 @@ CREATE TABLE PersonalizationProfileS(
     );
 
 --22 Creation of Surveys
-    --Enter code here
+    CREATE TABLE Survey (
+        ID INT PRIMARY KEY IDENTITY,
+        Title VARCHAR(20)
+);
 
+--22 creation of survey multivalued attribute
+    CREATE TABLE SurveyQuestions (
+        SurveyID INT,
+        Question VARCHAR(20), 
+        PRIMARY KEY (SurveyID, Question), 
+        FOREIGN KEY (SurveyID) REFERENCES Survey(ID) 
+);
 
-
+--relation between surveys and learner
+    CREATE TABLE FilledSurvey (
+        SurveyID INT,
+        Question VARCHAR(20),
+        LearnerID INT,
+        Answer VARCHAR(20),
+        PRIMARY KEY (SurveyID, Question, LearnerID), 
+        FOREIGN KEY (SurveyID, Question) REFERENCES SurveyQuestions(SurveyID, Question),
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID)
+);
