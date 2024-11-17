@@ -28,7 +28,23 @@ CREATE TABLE LearningPreference(
 );
 
 -- 2 Creation of Personalization Profiles
-    --Enter code here
+CREATE TABLE PersonalizationProfileS(
+    INT LearnerID IDENTITY,
+    INT ProfileID IDENTITY,
+    Prefered_content_type VARCHAR(20),
+    emotional_state VARCHAR(20),
+    personality_type VARCHAR(20),
+    PRIMARY KEY (LearnerID,ProfileID),
+    FOREIGN KEY (LearnerID) REFERENCES Learner (LearnerID) ON DELETE CASCADE ON UPDATE CASCADE 
+); 
+-- 2 PersonalizationProfileS multivalued attribute
+ CREATE TABLE HealthCondition(
+    INT LearnerID IDENTITY,
+    INT ProfileID IDENTITY,
+    Condition VARCHAR (20),
+    PRIMARY KEY (LearnerID,ProfileID,condition),
+    FOREIGN KEY (LearnerID,ProfileID) REFERENCES PersonalizationProfileS(LearnerID,ProfileID)
+ );
 
 --3 Creation of Courses
     --Enter code here
