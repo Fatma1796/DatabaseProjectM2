@@ -49,8 +49,14 @@ CREATE TABLE PersonalizationProfileS(
 --3 Creation of Courses
     --Enter code here
 
---4 Creation of Modules
+--4 Creation of Modulesgit
     --Enter code here
+
+--stfu
+
+
+
+
 
 --5 Creation of Learning Activities
     CREATE TABLE Learning_activities(
