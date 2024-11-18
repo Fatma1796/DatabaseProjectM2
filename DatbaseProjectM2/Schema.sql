@@ -66,7 +66,7 @@ CREATE TABLE PersonalizationProfileS(
 
 --5 Creation of Learning Activities
     CREATE TABLE Learning_activities(
-        int ActivityID PRIMARY KEY IDENTITY,
+        ActivityID INT PRIMARY KEY IDENTITY,
         activity_type VARCHAR(20),
         instruction_details VARCHAR(20),
         Max_points INT,
