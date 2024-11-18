@@ -106,8 +106,14 @@ CREATE TABLE PersonalizationProfileS(
     )
 
 --7 Creation of Achievements
-    --Enter code here
-
+CREATE TABLE Achievements(
+    AchievementID INT PRIMARY KEY IDENTITY,
+    Adescription VARCHAR(20), -- A KEYWORD
+    date_earned DATE,
+    Atype VARCHAR(20),-- A KEYWORD
+    FOREIGN KEY(LearnerID) REFERENCES Learner(LearnerID),
+    FOREIGN KEY(BadgesID) REFERENCES Badges(BadgesID),
+   );
 --8 Creation of Badges
     --Enter code here
 
@@ -132,7 +138,15 @@ CREATE TABLE PersonalizationProfileS(
 
 
 --11 Creation of Interaction Logs
-    --Enter code here
+    CREATE TABLE Interaction_logs(
+        LogID INT PRIMARY KEY IDENTITY,
+        Duration INT ,
+        ILTimestamp DATE, -- is this right?, IL KEYWORD
+        action_type VARCHAR(20),
+        FOREIGN KEY (ActivityID) REFERENCES Learning_activities(ActivityID),
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
+    );
+
 
 --12 Creation of Emotional Feedback
     --Enter code here
@@ -171,7 +185,16 @@ CREATE TABLE PersonalizationProfileS(
 
 
 --15 Creation of Skill Progression
-    --Enter code here
+     CREATE TABLE Skill_Progression(
+    SkillProgression_ID INT PRIMARY KEY IDENTITY,
+    Proficiency_level VARCHAR(20),
+    SKPtimestamp DATE, -- SKP KEYWORD
+    FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
+    FOREIGN KEY (skill) REFERENCES Skills(skill),
+
+
+   );
+
 
 --16 Creation of Assesments
     --Enter code here
@@ -221,7 +244,24 @@ CREATE TABLE PersonalizationProfileS(
 
 
 --19 Creation of Notifications
-    --Enter code here
+     CREATE TABLE Notifications (
+    notificationID INT PRIMARY KEY IDENTITY,
+    Ntimestamp DATE,-- N KEYWORD
+    Nmessage VARCHAR(20),-- N KEYWORD
+    urgency_level VARCHAR(20),
+
+   )
+   -- creation of received notifications ( relationship between learners and notifications)
+   CREATE TABLE receivedNotifications(
+notificationID INT,
+LearnerID INT,
+PRIMARY KEY(notificationID),
+PRIMARY KEY(LearnerID),
+FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
+FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID),
+
+   );
+
 
 --20 Creation of Disscusion Forums
     --Enter code here
