@@ -66,6 +66,18 @@ CREATE TABLE PersonalizationProfileS(
 --comment tania fu
 
 
+--rabena yostor
+   CREATE TABLE Learning_activities(
+        int ActivityID PRIMARY KEY IDENTITY,
+        activity_type VARCHAR(20),
+        instruction_details VARCHAR(20),
+        Max_points INT,
+        ModuleID INT,
+        FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
+        CourseID INT,
+        FOREIGN KEY (CourseID) REFERENCES Course(CourseID) ON DELETE CASCADE ON UPDATE CASCADE 
+    );
+
 
 
 
