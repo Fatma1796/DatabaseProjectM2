@@ -46,8 +46,18 @@ CREATE TABLE PersonalizationProfileS(
     FOREIGN KEY (LearnerID,ProfileID) REFERENCES PersonalizationProfileS(LearnerID,ProfileID)
  );
 
---3 Creation of Courses
-    --Enter code here
+--3 Creation of Courses bomba bomba
+   CREATE TABLE Courses (
+     CourseID INT PRIMARY KEY IDENTITY,
+    Title VARCHAR(20),
+    learning_objective VARCHAR(20),
+    credit_points INT,
+    difficulty_level VARCHAR(20),
+    pre_requisites VARCHAR(20),
+    Cdescription VARCHAR(20), -- C KEYWORD
+    
+    );
+
 
 --4 Creation of Modulesgit
     --Enter code here
