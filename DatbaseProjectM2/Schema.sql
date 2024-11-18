@@ -52,8 +52,7 @@ CREATE TABLE PersonalizationProfileS(
 --4 Creation of Modulesgit
     --Enter code here
 
---stfu
---comment tania fu
+
 
 
 --rabena yostor
