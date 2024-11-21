@@ -33,7 +33,7 @@ CREATE TABLE PersonalizationProfiles(
     LearnerID INT IDENTITY,
     ProfileID INT IDENTITY,
     Prefered_content_type VARCHAR(20),
-    emotional_state VARCHAR(20),
+    emotional_state VARCHAR(50),
     personality_type VARCHAR(20),
     PRIMARY KEY (LearnerID,ProfileID),
     FOREIGN KEY (LearnerID) REFERENCES Learner (LearnerID) ON DELETE CASCADE ON UPDATE CASCADE 
@@ -258,12 +258,12 @@ feedback VARCHAR(20),
 --16 Creation of Assesments
    CREATE TABLE Assessments( 
 ID INT PRIMARY KEY IDENTITY,
-type VARCHAR(20),
+Atype VARCHAR(20),
 total_marks INT,
 passing_marks INT,
 criteria VARCHAR(20),
 weightage INT,
-description VARCHAR(20),
+Adescription VARCHAR(20),
 title VARCHAR(20), 
 ModuleID INT,
 CourseID INT,
@@ -314,6 +314,7 @@ FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE 
     Ntimestamp DATE,-- N KEYWORD
     Nmessage VARCHAR(20),-- N KEYWORD
     urgency_level VARCHAR(20),
+    ReadStatus BIT
 
    );
    -- creation of received notifications ( relationship between learners and notifications)
