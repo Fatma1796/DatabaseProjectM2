@@ -4,7 +4,7 @@ USE  Project
 
 -- 1 Creation of Learner
 CREATE TABLE Learner(
-    int LearnerID PRIMARY KEY IDENTITY,
+    LearnerID INT PRIMARY KEY IDENTITY,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     gender VARCHAR(20),
@@ -15,21 +15,21 @@ CREATE TABLE Learner(
 
 -- 1 Learners multivaled attributes
 CREATE TABLE Skills(
-   int LearnerID PRIMARY KEY IDENTITY,
+    LearnerID INT IDENTITY,
    skill VARCHAR(20),
    PRIMARY KEY (LearnerID, skill),
    FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
 CREATE TABLE LearningPreference(
-   int LearnerID PRIMARY KEY IDENTITY,
+    LearnerID INT IDENTITY,
    preference VARCHAR(20),
    PRIMARY KEY (LearnerID, preference),
    FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
 -- 2 Creation of Personalization Profiles
-CREATE TABLE PersonalizationProfileS(
+CREATE TABLE PersonalizationProfiles(
     LearnerID INT IDENTITY,
     ProfileID INT IDENTITY,
     Prefered_content_type VARCHAR(20),
@@ -44,7 +44,7 @@ CREATE TABLE PersonalizationProfileS(
     ProfileID INT IDENTITY,
     Condition VARCHAR (20),
     PRIMARY KEY (LearnerID,ProfileID,condition),
-    FOREIGN KEY (LearnerID,ProfileID) REFERENCES PersonalizationProfileS(LearnerID,ProfileID)
+    FOREIGN KEY (LearnerID,ProfileID) REFERENCES PersonalizationProfiles(LearnerID,ProfileID) ON DELETE CASCADE ON UPDATE CASCADE
  );
 
 --3 Creation of Courses
@@ -61,7 +61,37 @@ CREATE TABLE PersonalizationProfileS(
 
 
 --4 Creation of Modules git
-    --Enter code here
+     CREATE TABLE Modules(
+ModuleID INT PRIMARY KEY IDENTITY,
+  Title VARCHAR(20),
+difficulty VARCHAR(20),
+CourseID INT,
+contentURL VARCHAR(20),
+ FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE ,
+
+
+    );
+
+--4 Target Traits multivalue of Module
+
+CREATE TABLE Target_traits(
+ModuleID INT,
+CourseID INT,
+Trait VARCHAR(20),
+ FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
+ FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE ,
+);
+
+--4
+
+  CREATE TABLE ModuleContent(
+ModuleID INT,
+CourseID INT,
+content VARCHAR(20),
+ type  VARCHAR(20),
+ FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
+ FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE ,
+);
 
 
 
@@ -74,7 +104,7 @@ CREATE TABLE PersonalizationProfileS(
         ModuleID INT,
         FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
         CourseID INT,
-        FOREIGN KEY (CourseID) REFERENCES Course(CourseID) ON DELETE CASCADE ON UPDATE CASCADE 
+        FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE 
     );
 
 --6 Creation of Course Enrollment
@@ -85,9 +115,19 @@ CREATE TABLE PersonalizationProfileS(
         completion_date DATE,
         enrollment_date DATE,
         status VARCHAR(20),  --status is an attribute
-        FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
-        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID)
-    )
+        FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+--8 Creation of Badges
+CREATE TABLE Badge(
+BadgeID INT PRIMARY KEY IDENTITY,
+ title VARCHAR(20),
+ Bdescription VARCHAR(20),
+ criteria VARCHAR(20),
+points INT,
+
+);
 
 --7 Creation of Achievements
 CREATE TABLE Achievements(
@@ -95,15 +135,18 @@ CREATE TABLE Achievements(
     Adescription VARCHAR(20), -- A KEYWORD
     date_earned DATE,
     Atype VARCHAR(20),-- A KEYWORD
-    FOREIGN KEY(LearnerID) REFERENCES Learner(LearnerID),
-    FOREIGN KEY(BadgesID) REFERENCES Badges(BadgesID),
+    LearnerID INT IDENTITY,
+    BadgeID INT IDENTITY,
+    FOREIGN KEY(LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(BadgeID) REFERENCES Badge(BadgeID) ON DELETE CASCADE ON UPDATE CASCADE,
    );
---8 Creation of Badges
-    --Enter code here
+
+
+
 
 --9 Creation of Leaderboards
     CREATE TABLE Leaderboard(
-        int BoardID PRIMARY KEY IDENTITY,
+        BoardID INT PRIMARY KEY IDENTITY,
         season VARCHAR(20)
     );
     
@@ -116,8 +159,8 @@ CREATE TABLE Achievements(
         completion_status VARCHAR(20), 
         custom_content VARCHAR(20), --this needs many characters
         adaptive_rules VARCHAR(20), --this needs many characters
-        FOREIGN KEY (LearnerID) REFERENCES PersonalizationProfiles(LearnerID),
-        FOREIGN KEY (ProfileID) REFERENCES PersonalizationProfiles(ProfileID)
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (ProfileID) REFERENCES PersonalizationProfiles(ProfileID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -127,17 +170,45 @@ CREATE TABLE Achievements(
         Duration INT ,
         ILTimestamp DATE, -- is this right?, IL KEYWORD
         action_type VARCHAR(20),
-        FOREIGN KEY (ActivityID) REFERENCES Learning_activities(ActivityID),
-        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
+        ActivityID INT IDENTITY,
+        LearnerID INT IDENTITY,
+        FOREIGN KEY (ActivityID) REFERENCES Learning_activities(ActivityID) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE,
+    );
+
+    --17 Creation of Instructor
+    CREATE TABLE Instructor(
+       InstructorID INT PRIMARY KEY IDENTITY,
+        InstructorName VARCHAR(20), --Cahnged to InstructorName as name is a keyword
+        latest_qualification VARCHAR(20),
+        expertise_area VARCHAR(20),
+        email VARCHAR(20)
     );
 
 
 --12 Creation of Emotional Feedback
-    --Enter code here
+    CREATE TABLE Emotional_feedback(
+FeedbackID INT PRIMARY KEY IDENTITY,
+timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+emotional_state VARCHAR(20),
+LearnerID INT,
+ FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE ,
+
+);
+
+CREATE TABLE Emotionalfeedback_review ( 
+FeedbackID INT,
+InstructorID INT,
+feedback VARCHAR(20),
+ FOREIGN KEY (FeedbackID) REFERENCES Emotional_feedback(FeedbackID) ON DELETE CASCADE ON UPDATE CASCADE ,
+ FOREIGN KEY (InstructorID) REFERENCES Instructor(InstructorID) ON DELETE CASCADE ON UPDATE CASCADE ,
+
+
+);
 
 --13 Creation of Quest
      CREATE TABLE Quest(
-        int QuestID PRIMARY KEY IDENTITY,
+         QuestID INT PRIMARY KEY IDENTITY,
         difficulty_level VARCHAR(20),
         criteria VARCHAR(20),
         Qdescription VARCHAR(20), --I added the Q as description is a keyword
@@ -146,14 +217,14 @@ CREATE TABLE Achievements(
 
 -- 13 Quest Inheritance
     CREATE TABLE Skill_Mastery(
-         int QuestID PRIMARY KEY IDENTITY,
+         QuestID INT  IDENTITY,
          skill VARCHAR(20),
          PRIMARY KEY (QuestID, skill),
          FOREIGN KEY (QuestID) REFERENCES Quest ON DELETE CASCADE ON UPDATE CASCADE 
     );
 
     CREATE TABLE Collaborative(
-         int QuestID PRIMARY KEY IDENTITY,
+          QuestID INT PRIMARY KEY IDENTITY,
          deadline DATE,
          max_num_participants INT,
         FOREIGN KEY (QuestID) REFERENCES Quest ON DELETE CASCADE ON UPDATE CASCADE 
@@ -162,9 +233,9 @@ CREATE TABLE Achievements(
 --14 Creation of Rewards
     CREATE TABLE Reward (
         RewardID INT PRIMARY KEY IDENTITY, 
-        value INT,
-        description VARCHAR(20), ----this needs many characters
-        type VARCHAR(20) 
+        Rvalue INT,
+        Rdescription VARCHAR(20), ----this needs many characters
+        Rtype VARCHAR(20) 
 );
 
 
@@ -173,26 +244,34 @@ CREATE TABLE Achievements(
     SkillProgression_ID INT PRIMARY KEY IDENTITY,
     Proficiency_level VARCHAR(20),
     SKPtimestamp DATE, -- SKP KEYWORD
-    FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
-    FOREIGN KEY (skill) REFERENCES Skills(skill),
+    LearnerID INT,
+    skill_name VARCHAR(20),
+    FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE ,
+    FOREIGN KEY (skill_name) REFERENCES Skills(skill) ON DELETE CASCADE ON UPDATE CASCADE ,
 
 
    );
 
-   --trial 101
+
 
 
 --16 Creation of Assesments
-    --Enter code here
+   CREATE TABLE Assessments( 
+ID INT PRIMARY KEY IDENTITY,
+type VARCHAR(20),
+total_marks INT,
+passing_marks INT,
+criteria VARCHAR(20),
+weightage INT,
+description VARCHAR(20),
+title VARCHAR(20), 
+ModuleID INT,
+CourseID INT,
+FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
+ FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE ,
+);
 
---17 Creation of Instructor
-    CREATE TABLE Instructor(
-        int InstructorID PRIMARY KEY IDENTITY,
-        InstructorName VARCHAR(20), --Cahnged to InstructorName as name is a keyword
-        latest_qualification VARCHAR(20),
-        expertise_area VARCHAR(20),
-        email VARCHAR(20)
-    );
+
 
 --17 Relation between the LearningPath and Instructor
     CREATE TABLE Pathreview(
@@ -205,7 +284,7 @@ CREATE TABLE Achievements(
     );
 
 --17 Relation between Emotional Feedback and Instructor
-    CREATE TABLE Emotionalfeedback_review(
+    CREATE TABLE Emotionalfeedbackreview(
         FeedbackID INT,
         InstructorID INT,
         feedback VARCHAR(20),
@@ -224,8 +303,8 @@ CREATE TABLE Achievements(
         metadata VARCHAR(20),
         type VARCHAR(20), 
         content_URL VARCHAR(20), 
-        FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID),
-        FOREIGN KEY (CourseID) REFERENCES Modules(CourseID)
+        FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -241,20 +320,39 @@ CREATE TABLE Achievements(
    CREATE TABLE receivedNotifications(
 notificationID INT,
 LearnerID INT,
-PRIMARY KEY(notificationID),
-PRIMARY KEY(LearnerID),
-FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID),
-FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID),
+PRIMARY KEY(notificationID,LearnerID),
+FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID) ON DELETE CASCADE ON UPDATE CASCADE,
 
    );
 
 
 --20 Creation of Disscusion Forums
-    --Enter code here
+    CREATE TABLE Discussion_forum ( 
+forumID INT PRIMARY KEY IDENTITY,
+title VARCHAR(20), 
+last_active DATETIME,
+timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+description VARCHAR(20),
+ModuleID INT,
+CourseID INT,
+FOREIGN KEY (ModuleID) REFERENCES Modules(ModuleID) ON DELETE CASCADE ON UPDATE CASCADE ,
+ FOREIGN KEY (CourseID) REFERENCES Courses(CourseID) ON DELETE CASCADE ON UPDATE CASCADE ,
+
+);
+ CREATE TABLE LearnerDiscussion ( 
+Post INT PRIMARY KEY IDENTITY,
+time TIME,
+ForumID INT,
+LearnerID INT,
+FOREIGN KEY (ForumID) REFERENCES Discussion_forum(ForumID) ON DELETE CASCADE ON UPDATE CASCADE ,
+FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE ,
+
+);
 
 --21 Creation of Learning Goals
     CREATE TABLE Learning_goal(
-         int ID PRIMARY KEY IDENTITY,
+         ID INT PRIMARY KEY IDENTITY,
          status VARCHAR(20),
          deadline DATE,
          Gdescription VARCHAR(20) --Wrote Gdescription instead of description(keyword)
@@ -265,8 +363,8 @@ FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID),
         GoalID INT,
         LearnerID INT,
         PRIMARY KEY (GoalID, LearnerID),
-        FOREIGN KEY (GoalID) REFERENCES Learning_goal ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (LearnerID) REFERENCES Learner ON DELETE CASCADE ON UPDATE CASCADE
+        FOREIGN KEY (GoalID) REFERENCES Learning_goal(ID) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 --22 Creation of Surveys
@@ -280,7 +378,7 @@ FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID),
         SurveyID INT,
         Question VARCHAR(20), 
         PRIMARY KEY (SurveyID, Question), 
-        FOREIGN KEY (SurveyID) REFERENCES Survey(ID) 
+        FOREIGN KEY (SurveyID) REFERENCES Survey(ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 --relation between surveys and learner
@@ -290,6 +388,6 @@ FOREIGN KEY (notificationID) REFERENCES Notifications(notificationID),
         LearnerID INT,
         Answer VARCHAR(20),
         PRIMARY KEY (SurveyID, Question, LearnerID), 
-        FOREIGN KEY (SurveyID, Question) REFERENCES SurveyQuestions(SurveyID, Question),
-        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID)
+        FOREIGN KEY (SurveyID, Question) REFERENCES SurveyQuestions(SurveyID, Question) ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (LearnerID) REFERENCES Learner(LearnerID) ON DELETE CASCADE ON UPDATE CASCADE
 );
